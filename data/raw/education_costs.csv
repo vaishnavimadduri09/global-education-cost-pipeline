@@ -1,0 +1,11 @@
+country,university,tuition_usd,living_cost_usd,currency
+USA,Harvard University,54000,18000,USD
+UK,Oxford University,35000,15000,GBP
+Germany,TU Munich,500,10000,EUR
+Australia,University of Sydney,33000,14000,AUD
+Canada,University of Toronto,30000,12000,CAD
+India,IIT Delhi,2000,3000,INR
+France,Sorbonne University,3000,11000,EUR
+Japan,University of Tokyo,5000,9000,JPY
+China,Peking University,4000,6000,CNY
+Brazil,University of Sao Paulo,1000,5000,BRL
