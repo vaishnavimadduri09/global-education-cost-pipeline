@@ -1,40 +1,34 @@
 import pandas as pd
 
-print("Starting transformation...")
+def transform(df):
+    print("🔄 Transforming data...")
 
-# Load the data
-df = pd.read_csv("data/raw/education_costs.csv")
+    # Fix missing values in broad_impact
+    df["broad_impact"] = df["broad_impact"].fillna(0)
 
-# Exchange rates to USD
-exchange_rates = {
-    "USD": 1.0,
-    "GBP": 1.27,
-    "EUR": 1.08,
-    "AUD": 0.65,
-    "CAD": 0.74,
-    "INR": 0.012,
-    "JPY": 0.0067,
-    "CNY": 0.14,
-    "BRL": 0.20
-}
+    # Standardize country names
+    df["country"] = df["country"].str.strip().str.title()
 
-print("Converting all costs to USD...")
+    # Standardize institution names
+    df["institution"] = df["institution"].str.strip()
 
-# Convert tuition to USD
-df["tuition_usd_converted"] = df.apply(
-    lambda row: row["tuition_usd"] * exchange_rates[row["currency"]], axis=1
-)
+    # Add a total score rank category
+    df["rank_category"] = pd.cut(
+        df["world_rank"],
+        bins=[0, 100, 500, 1000, 2200],
+        labels=["Top 100", "Top 500", "Top 1000", "Rest"]
+    )
 
-# Convert living costs to USD
-df["living_cost_usd_converted"] = df.apply(
-    lambda row: row["living_cost_usd"] * exchange_rates[row["currency"]], axis=1
-)
+    # Keep only useful columns
+    df = df[["world_rank", "institution", "country", 
+             "score", "year", "broad_impact", "rank_category"]]
 
-# Calculate total cost
-df["total_cost_usd"] = df["tuition_usd_converted"] + df["living_cost_usd_converted"]
+    print(f"✅ Transformed data — {len(df)} rows ready")
+    return df
 
-# Save transformed data
-df.to_csv("data/raw/education_costs_transformed.csv", index=False)
-
-print("Transformation complete!")
-print(df[["country", "university", "total_cost_usd"]])
+if __name__ == "__main__":
+    df = pd.read_csv("data/cwurData.csv")
+    from validate import validate
+    validate(df)
+    df = transform(df)
+    print(df.head())

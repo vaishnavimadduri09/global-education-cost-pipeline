@@ -1,11 +1,14 @@
 import pandas as pd
-import requests
+import os
 
-print("Starting data extraction...")
+def extract():
+    print("📥 Extracting data...")
 
-# Download education cost data
-url = "https://raw.githubusercontent.com/dsrscientist/dataset1/master/education.csv"
+    df = pd.read_csv("data/cwurData.csv")
 
-response = requests.get(url)
+    print(f"✅ Extracted {len(df)} rows and {len(df.columns)} columns")
+    print(df.head())
+    return df
 
-print("Data extracted successfully!")
+if __name__ == "__main__":
+    extract()

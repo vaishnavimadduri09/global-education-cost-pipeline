@@ -1,47 +1,24 @@
-import psycopg2
+from google.cloud import bigquery
 import pandas as pd
 
-print("Connecting to PostgreSQL...")
+def load(df):
+    print("📤 Loading data into BigQuery...")
 
-# Connect to PostgreSQL
-conn = psycopg2.connect(
-    host="localhost",
-    database="postgres",
-    user="postgres",
-    password="postgres123"
-)
+    client = bigquery.Client(project="education-pipeline-499514")
 
-cursor = conn.cursor()
+    table_id = "education-pipeline-499514.education_costs.university_rankings"
 
-print("Creating table...")
+    job = client.load_table_from_dataframe(df, table_id)
+    job.result()
 
-# Create table
-cursor.execute("""
-    CREATE TABLE IF NOT EXISTS education_costs (
-        country VARCHAR(100),
-        university VARCHAR(200),
-        tuition_usd FLOAT,
-        living_cost_usd FLOAT,
-        currency VARCHAR(10),
-        tuition_usd_converted FLOAT,
-        living_cost_usd_converted FLOAT,
-        total_cost_usd FLOAT
-    )
-""")
+    print(f"✅ Loaded {len(df)} rows into BigQuery!")
 
-print("Loading data into PostgreSQL...")
+if __name__ == "__main__":
+    from extract import extract
+    from validate import validate
+    from transform import transform
 
-# Load transformed data
-df = pd.read_csv("data/raw/education_costs_transformed.csv")
-
-# Insert each row
-for _, row in df.iterrows():
-    cursor.execute("""
-        INSERT INTO education_costs VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-    """, tuple(row))
-
-conn.commit()
-cursor.close()
-conn.close()
-
-print("Data loaded into PostgreSQL successfully!")
+    df = extract()
+    validate(df)
+    df = transform(df)
+    load(df)

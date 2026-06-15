@@ -1,17 +1,32 @@
 import pandas as pd
 
-print("Starting data validation...")
+def validate(df):
+    print("🔍 Validating data...")
 
-# Load the data
-df = pd.read_csv("data/raw/education_costs.csv")
+    # Check for nulls
+    nulls = df.isnull().sum()
+    if nulls.any():
+        print(f"⚠️ Null values found:")
+        print(nulls[nulls > 0])
+    else:
+        print("✅ No null values found!")
 
-# Check 1: Look for missing values
-print("Checking for missing values...")
-missing = df.isnull().sum()
-print(missing)
+    # Check for duplicates
+    dupes = df.duplicated().sum()
+    if dupes > 0:
+        print(f"⚠️ {dupes} duplicate rows found!")
+    else:
+        print("✅ No duplicates found!")
 
-# Check 2: Check how many rows and columns we have
-print(f"Total rows: {df.shape[0]}")
-print(f"Total columns: {df.shape[1]}")
+    # Check row count
+    if len(df) == 0:
+        raise ValueError("❌ Dataset is empty!")
+    else:
+        print(f"✅ Dataset has {len(df)} rows")
 
-print("Validation complete!")
+    print("✅ Validation complete!")
+    return True
+
+if __name__ == "__main__":
+    df = pd.read_csv("data/cwurData.csv")
+    validate(df)
