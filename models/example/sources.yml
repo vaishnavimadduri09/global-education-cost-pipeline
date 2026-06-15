@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: education_costs
+    database: education-pipeline-499514
+    schema: education_costs
+    tables:
+      - name: university_rankings
